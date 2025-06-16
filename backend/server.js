@@ -7,6 +7,15 @@ dotenv.config();
 
 const app = express();
 
+// Middleware to parse JSON request bodies
+app.use(express.json());  
+
+// Our custom simple middleware 
+// app.use((req,res,next) => {
+//    console.log("Hey, we hit a req, the method is",req.method)
+//    next()
+//})
+
 const PORT = process.env.PORT || 5001;
 
 async function initDB() {
@@ -33,23 +42,39 @@ async function initDB() {
     }
 }
 
+app.get("/", (req, res) => {
+    res.send("It's working");
+})
+
 //connectDB(process.env.DATABASE_URL)
 
 //app.get("/",(req,res) => {
 //    res.send("It's working")
 //});
 
-app.post("/api/transactions", async (req, res) => {
-    const { user_id, title, amount, category } = req.body;
-
+app.post("/api/transactions", async (req, res) => { 
+ //title, amount, category, user_id
     try {
-        const result = await sql`INSERT INTO transactions (user_id, title, amount, category)
-        VALUES (${user_id}, ${title}, ${amount}, ${category}) RETURNING *`;
+        const {title, amount, category, user_id} = req.body;
+    
+        if(!title || !user_id || !category || amount == undefined ) {
+            return res.status(400).json({message: "All fields are required"})
+        }
 
-        res.status(201).json(result);
+        const transaction = await sql`
+          INSERT INTO transactions (user_id, title, amount, category)
+          VALUES (${user_id}, ${title}, ${amount}, ${category})
+          RETURNING * 
+          
+        `
+        console.log(transaction);
+        res.status(201).json(transaction[0]);
+
+
     } catch (error) {
-        console.error("Error creating transaction:", error);
-        res.status(500).json({ error: "Internal server error" });
+        console.log("Error creating the transaction:", error)
+        res.status(500).json({message:"internal server error "}) 
+
     }
 });
 

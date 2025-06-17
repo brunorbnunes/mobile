@@ -25,6 +25,7 @@ async function initDB() {
             cpf VARCHAR(11) UNIQUE NOT NULL,
             name VARCHAR(255) NOT NULL,
             email VARCHAR(255) NOT NULL,
+            polo VARCHAR(255) NOT NULL,
             password VARCHAR(255) NOT NULL,
             created_at DATE NOT NULL DEFAULT CURRENT_DATE
         )`;
@@ -83,12 +84,12 @@ app.get("/api/users/:cpf", async (req, res) => {
 app.post("/api/users", async (req, res) => {
     try {
         const { cpf, name, email, password } = req.body;
-        if (!cpf || !name || !email || !password) {
+        if (!cpf || !name || !email || !polo || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
         const user = await sql`
-            INSERT INTO users (cpf, name, email, password)
-            VALUES (${cpf}, ${name}, ${email}, ${password})
+            INSERT INTO users (cpf, name, email, polo, password)
+            VALUES (${cpf}, ${name}, ${email}, ${polo}, ${password})
             RETURNING *
         `;
         res.status(201).json(user[0]);

@@ -20,16 +20,19 @@ const PORT = process.env.PORT || 5001;
 
 async function initDB() {
     try {
-        await sql `CREATE TABLE IF NOT EXISTS users (
+     // Usuários (Admin, Docente, Monitor, Aluno)
+        await sql`CREATE TABLE IF NOT EXISTS users (
             user_id SERIAL PRIMARY KEY,
             cpf VARCHAR(11) UNIQUE NOT NULL,
             name VARCHAR(255) NOT NULL,
-            email VARCHAR(255) NOT NULL,
-            polo VARCHAR(255) NOT NULL,
+            email VARCHAR(255) UNIQUE NOT NULL,
             password VARCHAR(255) NOT NULL,
+            role VARCHAR(20) NOT NULL, -- 'admin', 'docente', 'monitor', 'aluno'
+            polo VARCHAR(255),
+            active BOOLEAN DEFAULT TRUE,
             created_at DATE NOT NULL DEFAULT CURRENT_DATE
         )`;
-
+        
         //DECIMAL (10,2)
         //Means: a fixed-point number with:
         // 10 digits in total 

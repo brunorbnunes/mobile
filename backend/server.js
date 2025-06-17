@@ -20,13 +20,13 @@ const PORT = process.env.PORT || 5001;
 
 async function initDB() {
     try {
-        await sql `CREATE TABLE IF NOT EXISTS transactions (
-        id SERIAL PRIMARY KEY,
-        user_id VARCHAR(255) NOT NULL,
-        title VARCHAR(255) NOT NULL,
-        amount DECIMAL(10,2) NOT NULL,
-        category VARCHAR(255) NOT NULL,
-        created_at DATE NOT NULL DEFAULT CURRENT_DATE
+        await sql `CREATE TABLE IF NOT EXISTS users (
+            user_id SERIAL PRIMARY KEY,
+            cpf VARCHAR(11) UNIQUE NOT NULL,
+            name VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            password VARCHAR(255) NOT NULL,
+            created_at DATE NOT NULL DEFAULT CURRENT_DATE
         )`;
 
         //DECIMAL (10,2)
@@ -52,76 +52,68 @@ app.get("/", (req, res) => {
 //    res.send("It's working")
 //});
 
-app.get ("/api/transactions/:userId", async (req, res) => {
-    try{
-        const{userId}=req.params
-//      console.log(userId);
-    const transactions = await sql`
-        SELECT * FROM transactions WHERE user_id = ${userId} ORDER BY created_at DESC
-        `
-
-        res.status(200).json(transactions);
-    }catch (error) {
-
-        console.log("Error getting the transaction:", error)
-        res.status(500).json({message:"internal server error "}) 
-
-    }
-});
-
-app.post("/api/transactions", async (req, res) => { 
- //title, amount, category, user_id
+// Get all users
+app.get("/api/users", async (req, res) => {
     try {
-        const {title, amount, category, user_id} = req.body;
-    
-        if(!title || !user_id || !category || amount == undefined ) {
-            return res.status(400).json({message: "All fields are required"})
-        }
-
-        const transaction = await sql`
-          INSERT INTO transactions (user_id, title, amount, category)
-          VALUES (${user_id}, ${title}, ${amount}, ${category})
-          RETURNING * 
-          
-        `
-        console.log(transaction);
-        res.status(201).json(transaction[0]);
-
-
+        const users = await sql`SELECT * FROM users ORDER BY created_at DESC`;
+        res.status(200).json(users);
     } catch (error) {
-        console.log("Error creating the transaction:", error)
-        res.status(500).json({message:"internal server error "}) 
-
+        console.log("Error getting users:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
 });
 
-app.delete("/api/transactions/:id", async (req, res) => {
+
+// Get a user by CPF
+app.get("/api/users/:cpf", async (req, res) => {
     try {
-        const {id} = req.params;
-
-        if(isNaN(parseInt(id))){
-            return res.status(400).json({message:"Invalid Transaction ID"})
-
+        const { cpf } = req.params;
+        const user = await sql`SELECT * FROM users WHERE cpf = ${cpf}`;
+        if (user.length === 0) {
+            return res.status(404).json({ message: "User not found" });
         }
+        res.status(200).json(user[0]);
+    } catch (error) {
+        console.log("Error getting user:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
 
-//        console.log(typeof id);
-
-        const result = await sql`
-            DELETE FROM transactions WHERE id = ${id} RETURNING *
+// Create a new user
+app.post("/api/users", async (req, res) => {
+    try {
+        const { cpf, name, email, password } = req.body;
+        if (!cpf || !name || !email || !password) {
+            return res.status(400).json({ message: "All fields are required" });
+        }
+        const user = await sql`
+            INSERT INTO users (cpf, name, email, password)
+            VALUES (${cpf}, ${name}, ${email}, ${password})
+            RETURNING *
         `;
-
-        if(result.length === 0) {
-            return res.status(404).json({message: "Transaction not found"});
-        }
-
-        res.status(200).json(result[0]);
-
+        res.status(201).json(user[0]);
     } catch (error) {
-        console.log("Error deleting the transaction:", error)
-        res.status(500).json({message:"internal server error "}) 
+        console.log("Error creating user:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
+});
 
-})
+// Delete a user by CPF
+app.delete("/api/users/:cpf", async (req, res) => {
+    try {
+        const { cpf } = req.params;
+        const result = await sql`
+            DELETE FROM users WHERE cpf = ${cpf} RETURNING *
+        `;
+        if (result.length === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.status(200).json(result[0]);
+    } catch (error) {
+        console.log("Error deleting user:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
 
 //app.listen(PORT, () => {
 //    console.log("Server is running on PORT:", PORT );

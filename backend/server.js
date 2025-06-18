@@ -171,25 +171,6 @@ app.post("/api/unidades", async (req, res) => {
     }
 });
 
-// Exemplo de rota para criar unidade (apenas admin)
-app.post("/api/unidades", async (req, res) => {
-    try {
-        const { nome } = req.body;
-        if (!nome) {
-            return res.status(400).json({ message: "Nome da unidade é obrigatório" });
-        }
-        const unidade = await sql`
-            INSERT INTO unidades (nome)
-            VALUES (${nome})
-            RETURNING *
-        `;
-        res.status(201).json(unidade[0]);
-    } catch (error) {
-        console.log("Error creating unidade:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-});
-
 // Exemplo de rota para criar turma (apenas docente)
 app.post("/api/turmas", async (req, res) => {
     try {

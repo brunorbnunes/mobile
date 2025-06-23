@@ -5,6 +5,7 @@ import axios from "axios";
 
 const API = "http://192.168.0.20:5001"; // Troque pelo IP do seu backend
 
+
 // Cadastro de Usuário
 function CadastrarUsuario() {
   const [form, setForm] = useState({

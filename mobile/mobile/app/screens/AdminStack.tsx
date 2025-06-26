@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Button, ScrollView, StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import CadastrarUsuario from '../CadastrarUsuario';
 import CadastrarUnidade from '../CadastrarUnidade';
+import { useAuth } from '../../AuthContext';
 
 // --- TELA INICIAL DO ADMIN ---
 const AdminHome = () => {
@@ -22,15 +23,23 @@ const AdminHome = () => {
 // --- STACK DO ADMIN ---
 const Stack = createNativeStackNavigator();
 
-const AdminStack = () => (
-  <Stack.Navigator>
-    <Stack.Screen name="AdminHome" component={AdminHome} options={{ title: 'Admin' }} />
-    <Stack.Screen name="CadastrarUsuario" component={CadastrarUsuario} />
-    <Stack.Screen name="CadastrarUnidade" component={CadastrarUnidade} />
-  </Stack.Navigator>
-);
-
-export default AdminStack;
+export default function AdminStack() {
+  const { logout } = useAuth();
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="AdminHome"
+        component={AdminHome}
+        options={{
+          title: 'Admin',
+          headerRight: () => <Button title="Sair" onPress={logout} />
+        }}
+      />
+      <Stack.Screen name="CadastrarUsuario" component={CadastrarUsuario} />
+      <Stack.Screen name="CadastrarUnidade" component={CadastrarUnidade} />
+    </Stack.Navigator>
+  );
+}
 
 // --- ESTILOS ---
 const styles = StyleSheet.create({

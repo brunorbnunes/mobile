@@ -4,6 +4,7 @@ import { View, Text, Button, StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import LancarFrequencia from '../LancarFrequencia';
+import { useAuth } from '../../AuthContext';
 
 const MonitorHome = () => {
   const navigation = useNavigation<any>();
@@ -18,14 +19,22 @@ const MonitorHome = () => {
 
 const Stack = createNativeStackNavigator();
 
-const MonitorStack = () => (
-  <Stack.Navigator>
-    <Stack.Screen name="MonitorHome" component={MonitorHome} options={{ title: 'Monitor' }} />
-    <Stack.Screen name="LancarFrequencia" component={LancarFrequencia} />
-  </Stack.Navigator>
-);
-
-export default MonitorStack;
+export default function MonitorStack() {
+  const { logout } = useAuth();
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="MonitorHome"
+        component={MonitorHome}
+        options={{
+          title: 'Monitor',
+          headerRight: () => <Button title="Sair" onPress={logout} />
+        }}
+      />
+      <Stack.Screen name="LancarFrequencia" component={LancarFrequencia} />
+    </Stack.Navigator>
+  );
+}
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20 },

@@ -1,6 +1,7 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, Button } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useAuth } from '../../AuthContext';
 
 // --- TELA INICIAL DO ALUNO ---
 const AlunoHome = () => {
@@ -15,13 +16,21 @@ const AlunoHome = () => {
 // --- STACK DO ALUNO ---
 const Stack = createNativeStackNavigator();
 
-const AlunoStack = () => (
-  <Stack.Navigator>
-    <Stack.Screen name="AlunoHome" component={AlunoHome} options={{ title: 'Aluno' }} />
-  </Stack.Navigator>
-);
-
-export default AlunoStack;
+export default function AlunoStack() {
+  const { logout } = useAuth();
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="AlunoHome"
+        component={AlunoHome}
+        options={{
+          title: 'Aluno',
+          headerRight: () => <Button title="Sair" onPress={logout} />
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
 
 // --- ESTILOS ---
 const styles = StyleSheet.create({

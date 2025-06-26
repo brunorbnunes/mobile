@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Button, ScrollView, StyleSheet } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import CadastrarTurma from '../CadastrarTurma';
 import AssociarAlunoTurma from '../AssociarAlunoTurma';
 import LancarFrequencia from '../LancarFrequencia';
+import { useAuth } from '../../AuthContext';
 
 // --- TELA INICIAL DO DOCENTE ---
 const DocenteHome = () => {
@@ -25,14 +26,24 @@ const DocenteHome = () => {
 // --- STACK DO DOCENTE ---
 const Stack = createNativeStackNavigator();
 
-const DocenteStack = () => (
-  <Stack.Navigator>
-    <Stack.Screen name="DocenteHome" component={DocenteHome} options={{ title: 'Docente' }} />
-    <Stack.Screen name="CadastrarTurma" component={CadastrarTurma} />
-    <Stack.Screen name="AssociarAlunoTurma" component={AssociarAlunoTurma} />
-    <Stack.Screen name="LancarFrequencia" component={LancarFrequencia} />
-  </Stack.Navigator>
-);
+const DocenteStack = () => {
+  const { logout } = useAuth();
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="DocenteHome"
+        component={DocenteHome}
+        options={{
+          title: 'Docente',
+          headerRight: () => <Button title="Sair" onPress={logout} />
+        }}
+      />
+      <Stack.Screen name="CadastrarTurma" component={CadastrarTurma} />
+      <Stack.Screen name="AssociarAlunoTurma" component={AssociarAlunoTurma} />
+      <Stack.Screen name="LancarFrequencia" component={LancarFrequencia} />
+    </Stack.Navigator>
+  );
+};
 
 export default DocenteStack;
 

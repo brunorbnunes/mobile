@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
 import { useAuth } from '../../AuthContext';
 
@@ -6,10 +6,12 @@ import { useAuth } from '../../AuthContext';
 const API_URL = "http://192.168.179.173:5001/api/login";
 
 export default function LoginScreen() {
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
+
+  // Removido logout automático para evitar loop de login
 
   const handleLogin = async () => {
     setErro('');

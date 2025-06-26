@@ -96,6 +96,35 @@ async function initDB() {
     }
 }
 
+// LOGIN
+app.post("/api/login", async (req, res) => {
+    try {
+        const { email, senha } = req.body;
+        if (!email || !senha) {
+            return res.status(400).json({ message: "Email e senha são obrigatórios" });
+        }
+        const users = await sql`SELECT * FROM users WHERE email = ${email}`;
+        if (users.length === 0) {
+            return res.status(401).json({ message: "Usuário ou senha inválidos" });
+        }
+        const user = users[0];
+        // Comparação simples de senha (em produção use hash!)
+        if (user.password !== senha) {
+            return res.status(401).json({ message: "Usuário ou senha inválidos" });
+        }
+        // Retorne apenas dados necessários
+        res.status(200).json({
+            id: user.user_id,
+            nome: user.name,
+            role: user.role,
+            email: user.email,
+            polo: user.polo
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Erro ao fazer login" });
+    }
+});
+
 app.get("/", (req, res) => {
     res.send("It's working");
 })

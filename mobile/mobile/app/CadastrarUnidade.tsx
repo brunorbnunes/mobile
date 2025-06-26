@@ -2,19 +2,22 @@ import React, { useState } from "react";
 import { View, TextInput, Button, Text, StyleSheet } from "react-native";
 import axios from "axios";
 
-const API_URL = "http://192.168.0.20:5001/api/unidades";
+const API_URL = "http://192.168.179.173:5001/api/unidades";
 
 export default function CadastrarUnidade() {
   const [nome, setNome] = useState("");
   const [msg, setMsg] = useState("");
 
   const handleSubmit = async () => {
+    console.log('INICIO CADASTRO UNIDADE');
     setMsg("");
     try {
+      console.log('Tentando cadastrar unidade:', nome);
       await axios.post(API_URL, { nome });
       setMsg("Unidade cadastrada!");
     } catch (e) {
       setMsg("Erro ao cadastrar unidade.");
+      console.error("Erro ao cadastrar unidade:", e);
     }
   };
 

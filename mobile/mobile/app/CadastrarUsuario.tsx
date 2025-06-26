@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, TextInput, Button, Text, StyleSheet, ScrollView } from "react-native";
 import axios from "axios";
 
-const API_URL = "http://192.168.0.20:5001/api/users"; // Troque pelo IP do seu PC
+const API_URL = "http://192.168.179.173:5001/api/users"; // Troque pelo IP do seu PC
 
 export default function CadastrarUsuario() {
   const [form, setForm] = useState({

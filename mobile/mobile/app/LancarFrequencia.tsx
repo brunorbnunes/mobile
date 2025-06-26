@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, TextInput, Button, Text, StyleSheet, Switch } from "react-native";
 import axios from "axios";
 
-const API_URL = "http://SEU_IP_LOCAL:5001/api/frequencias";
+const API_URL = "http://192.168.179.173:5001/api/frequencias";
 
 export default function LancarFrequencia() {
   const [calendario_id, setCalendarioId] = useState("");

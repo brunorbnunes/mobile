@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://192.168.0.20:5001/api";
+const API_BASE_URL = "http://192.168.15.12:5001/api";
 
 const API_ENDPOINTS = {
   LOGIN: `${API_BASE_URL}/login`,

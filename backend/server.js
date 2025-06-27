@@ -272,6 +272,22 @@ app.patch("/api/alunos-turmas/:id/desativar", async (req, res) => {
     }
 });
 
+// Listar todas as associações de um aluno
+app.get("/api/alunos-turmas", async (req, res) => {
+    try {
+        const { aluno_id } = req.query;
+        if (!aluno_id) {
+            return res.status(400).json({ message: "aluno_id é obrigatório" });
+        }
+        const result = await sql`
+            SELECT * FROM alunos_turmas WHERE aluno_id = ${aluno_id} AND ativo = TRUE
+        `;
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500).json({ message: "Erro ao buscar associações do aluno" });
+    }
+});
+
 // --- CALENDÁRIO ---
 app.post("/api/calendario", async (req, res) => {
     try {

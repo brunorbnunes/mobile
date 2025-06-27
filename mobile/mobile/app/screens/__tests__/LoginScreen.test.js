@@ -74,7 +74,7 @@ describe('LoginScreen Tests', () => {
     const senha = '123456';
     
     // Simula a chamada da API (lógica do handleLogin)
-    const response = await fetch('http://192.168.0.20:5001/api/login', {
+    const response = await fetch('http://192.168.15.12:5001/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, senha }),
@@ -87,7 +87,7 @@ describe('LoginScreen Tests', () => {
     
     // Verifica se fetch foi chamado com os parâmetros corretos
     expect(global.fetch).toHaveBeenCalledWith(
-      'http://192.168.0.20:5001/api/login',
+      'http://192.168.15.12:5001/api/login',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -108,7 +108,7 @@ describe('LoginScreen Tests', () => {
     const email = 'invalid@example.com';
     const senha = 'wrongpassword';
     
-    const response = await fetch('http://192.168.0.20:5001/api/login', {
+    const response = await fetch('http://192.168.15.12:5001/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, senha }),
@@ -136,7 +136,7 @@ describe('LoginScreen Tests', () => {
     let erro = '';
     
     try {
-      await fetch('http://192.168.0.20:5001/api/login', {
+      await fetch('http://192.168.15.12:5001/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: 'test@example.com', senha: '123456' }),
@@ -159,7 +159,7 @@ describe('LoginScreen Tests', () => {
     const email = 'test@example.com';
     const senha = 'mypassword';
     
-    await fetch('http://192.168.0.20:5001/api/login', {
+    await fetch('http://192.168.15.12:5001/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, senha }),
@@ -167,7 +167,7 @@ describe('LoginScreen Tests', () => {
     
     // Verifica se os dados foram enviados no formato correto
     expect(global.fetch).toHaveBeenCalledWith(
-      'http://192.168.0.20:5001/api/login',
+      'http://192.168.15.12:5001/api/login',
       expect.objectContaining({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

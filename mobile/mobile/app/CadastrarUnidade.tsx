@@ -3,7 +3,7 @@ import { View, TextInput, Button, Text } from "react-native";
 import axios from "axios";
 import { authStyles } from "../assets/styles/auth.styles";
 
-const API_URL = "http://192.168.15.12:5001/api/unidades";
+const API_URL = "http://192.168.0.20:5001/api/unidades";
 
 export default function CadastrarUnidade() {
   const [nome, setNome] = useState("");

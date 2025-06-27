@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, TextInput, Button, Text } from 'react-native';
 import { useAuth } from '../../AuthContext';
 import { authStyles } from '../../assets/styles/auth.styles';
-
-// Observe o IP e a porta do servidor de autenticação
-const API_URL = "http://192.168.15.12:5001/api/login";
+import { API_ENDPOINTS } from '../../config/api';
 
 export default function LoginScreen() {
   const { login, logout } = useAuth();
@@ -21,7 +19,7 @@ export default function LoginScreen() {
       return;
     }
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetch(API_ENDPOINTS.LOGIN, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, senha }),

@@ -3,10 +3,10 @@ const { API_BASE_URL, API_ENDPOINTS } = require('../api.js');
 
 describe('API Configuration', () => {
   test('deve ter as configurações corretas da API', () => {
-    expect(API_BASE_URL).toBe('http://192.168.0.20:5001/api');
-    expect(API_ENDPOINTS.LOGIN).toBe('http://192.168.0.20:5001/api/login');
-    expect(API_ENDPOINTS.CALENDARIO).toBe('http://192.168.0.20:5001/api/calendario');
-    expect(API_ENDPOINTS.FREQUENCIAS).toBe('http://192.168.0.20:5001/api/frequencias');
+    expect(API_BASE_URL).toBe('http://192.168.15.12:5001/api');
+    expect(API_ENDPOINTS.LOGIN).toBe('http://192.168.15.12:5001/api/login');
+    expect(API_ENDPOINTS.CALENDARIO).toBe('http://192.168.15.12:5001/api/calendario');
+    expect(API_ENDPOINTS.FREQUENCIAS).toBe('http://192.168.15.12:5001/api/frequencias');
   });
 
   test('deve ter todas as propriedades necessárias', () => {

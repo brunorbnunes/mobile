@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { View, TextInput, Button, Text } from "react-native";
 import axios from "axios";
 import { authStyles } from "../assets/styles/auth.styles";
+import { API_ENDPOINTS } from "../config/api";
 
-const API_URL = "http://192.168.0.20:5001/api/turmas";
+const API_URL = API_ENDPOINTS.TURMAS;
 
 export default function CadastrarTurma() {
   const [form, setForm] = useState({

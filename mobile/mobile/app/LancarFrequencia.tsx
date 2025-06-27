@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { View, TextInput, Button, Text, Switch } from "react-native";
 import axios from "axios";
 import { authStyles } from "../assets/styles/auth.styles";
+import { API_ENDPOINTS } from "../config/api";
 
-const API_URL = "http://192.168.0.20:5001/api/frequencias";
+const API_URL = API_ENDPOINTS.FREQUENCIAS;
 
 export default function LancarFrequencia() {
   const [turmaId, setTurmaId] = useState("");

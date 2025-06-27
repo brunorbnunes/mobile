@@ -74,4 +74,27 @@ export const authStyles = StyleSheet.create({
     color: '#555',
     marginBottom: 10,
   },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    width: '85%',
+    alignItems: 'center',
+  },
+  userItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+    width: '100%',
+  },
+  actionBtn: {
+    marginLeft: 10,
+  },
 });

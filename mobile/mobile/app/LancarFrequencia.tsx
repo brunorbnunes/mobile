@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { View, TextInput, Button, Text, StyleSheet, Switch } from "react-native";
+import { View, TextInput, Button, Text, Switch } from "react-native";
 import axios from "axios";
+import { authStyles } from "../assets/styles/auth.styles";
 
-const API_URL = "http://192.168.179.173:5001/api";
+const API_URL = "http://192.168.15.12:5001/api";
 
 export default function LancarFrequencia() {
   const [turmaId, setTurmaId] = useState("");
@@ -37,10 +38,10 @@ export default function LancarFrequencia() {
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput style={styles.input} placeholder="ID da turma" value={turmaId} onChangeText={setTurmaId} keyboardType="numeric" />
-      <TextInput style={styles.input} placeholder="Data da aula (YYYY-MM-DD)" value={data} onChangeText={setData} />
-      <TextInput style={styles.input} placeholder="ID do aluno" value={aluno_id} onChangeText={setAlunoId} keyboardType="numeric" />
+    <View style={authStyles.container}>
+      <TextInput style={authStyles.input} placeholder="ID da turma" value={turmaId} onChangeText={setTurmaId} keyboardType="numeric" />
+      <TextInput style={authStyles.input} placeholder="Data da aula (YYYY-MM-DD)" value={data} onChangeText={setData} />
+      <TextInput style={authStyles.input} placeholder="ID do aluno" value={aluno_id} onChangeText={setAlunoId} keyboardType="numeric" />
       <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
         <Text>Presente?</Text>
         <Switch value={presente} onValueChange={setPresente} />
@@ -50,8 +51,3 @@ export default function LancarFrequencia() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { padding: 20 },
-  input: { borderWidth: 1, marginBottom: 10, padding: 8, borderRadius: 4 }
-});

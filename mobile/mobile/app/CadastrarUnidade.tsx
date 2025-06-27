@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { View, TextInput, Button, Text, StyleSheet } from "react-native";
+import { View, TextInput, Button, Text } from "react-native";
 import axios from "axios";
+import { authStyles } from "../assets/styles/auth.styles";
 
-const API_URL = "http://192.168.179.173:5001/api/unidades";
+const API_URL = "http://192.168.15.12:5001/api/unidades";
 
 export default function CadastrarUnidade() {
   const [nome, setNome] = useState("");
@@ -22,15 +23,10 @@ export default function CadastrarUnidade() {
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput style={styles.input} placeholder="Nome da unidade" value={nome} onChangeText={setNome} />
+    <View style={authStyles.container}>
+      <TextInput style={authStyles.input} placeholder="Nome da unidade" value={nome} onChangeText={setNome} />
       <Button title="Cadastrar" onPress={handleSubmit} />
       <Text>{msg}</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { padding: 20 },
-  input: { borderWidth: 1, marginBottom: 10, padding: 8, borderRadius: 4 }
-});

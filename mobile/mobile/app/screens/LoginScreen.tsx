@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
+import { View, TextInput, Button, Text } from 'react-native';
 import { useAuth } from '../../AuthContext';
+import { authStyles } from '../../assets/styles/auth.styles';
 
 // Observe o IP e a porta do servidor de autenticação
-const API_URL = "http://192.168.179.173:5001/api/login";
+const API_URL = "http://192.168.15.12:5001/api/login";
 
 export default function LoginScreen() {
   const { login, logout } = useAuth();
@@ -45,10 +46,10 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+    <View style={authStyles.container}>
+      <Text style={authStyles.title}>Login</Text>
       <TextInput
-        style={styles.input}
+        style={authStyles.input}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
@@ -56,21 +57,14 @@ export default function LoginScreen() {
         keyboardType="email-address"
       />
       <TextInput
-        style={styles.input}
+        style={authStyles.input}
         placeholder="Senha"
         value={senha}
         onChangeText={setSenha}
         secureTextEntry
       />
-      {erro ? <Text style={styles.error}>{erro}</Text> : null}
+      {erro ? <Text style={authStyles.errorText}>{erro}</Text> : null}
       <Button title="Entrar" onPress={handleLogin} />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 20 },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
-  input: { borderWidth: 1, marginBottom: 10, padding: 8, borderRadius: 4 },
-  error: { color: 'red', marginBottom: 10, textAlign: 'center' },
-});

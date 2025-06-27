@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { View, TextInput, Button, Text, StyleSheet } from "react-native";
+import { View, TextInput, Button, Text } from "react-native";
 import axios from "axios";
+import { authStyles } from "../assets/styles/auth.styles";
 
-const API_URL = "http://192.168.179.173:5001/api/alunos-turmas";
+const API_URL = "http://192.168.15.12:5001/api/alunos-turmas";
 
 export default function AssociarAlunoTurma() {
   const [aluno_id, setAlunoId] = useState("");
@@ -20,16 +21,11 @@ export default function AssociarAlunoTurma() {
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput style={styles.input} placeholder="ID do aluno" value={aluno_id} onChangeText={setAlunoId} keyboardType="numeric" />
-      <TextInput style={styles.input} placeholder="ID da turma" value={turma_id} onChangeText={setTurmaId} keyboardType="numeric" />
+    <View style={authStyles.container}>
+      <TextInput style={authStyles.input} placeholder="ID do aluno" value={aluno_id} onChangeText={setAlunoId} keyboardType="numeric" />
+      <TextInput style={authStyles.input} placeholder="ID da turma" value={turma_id} onChangeText={setTurmaId} keyboardType="numeric" />
       <Button title="Associar" onPress={handleSubmit} />
       <Text>{msg}</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { padding: 20 },
-  input: { borderWidth: 1, marginBottom: 10, padding: 8, borderRadius: 4 }
-});

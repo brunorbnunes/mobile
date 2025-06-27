@@ -1,4 +1,4 @@
-// Teste simples da configuração da API usando CommonJS
+// Teste simples da configuração da API
 const { API_BASE_URL, API_ENDPOINTS } = require('../api.js');
 
 describe('API Configuration', () => {

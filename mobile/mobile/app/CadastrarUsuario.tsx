@@ -1,5 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { TextInput, Button, Text, ScrollView, Modal, View, FlatList, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
+import { 
+  TextInput, 
+  Text, 
+  ScrollView, 
+  Modal, 
+  View, 
+  FlatList, 
+  TouchableOpacity, 
+  Alert, 
+  ActivityIndicator,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform
+} from "react-native";
+import { Ionicons } from '@expo/vector-icons';
 import axios from "axios";
 import { authStyles } from "../assets/styles/auth.styles";
 import { API_ENDPOINTS } from "../config/api";
@@ -28,18 +42,49 @@ export default function CadastrarUsuario() {
   const [modalVisible, setModalVisible] = useState(false);
   const [loadingUsuarios, setLoadingUsuarios] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+
+  // Estados para controle de foco dos inputs
+  const [focusedField, setFocusedField] = useState<string | null>(null);
+
+  const roles = [
+    { label: 'Administrador', value: 'admin' },
+    { label: 'Docente', value: 'docente' },
+    { label: 'Monitor', value: 'monitor' },
+    { label: 'Aluno', value: 'aluno' },
+  ];
 
   const handleChange = (field: string, value: string) => setForm({ ...form, [field]: value });
 
   const handleSubmit = async () => {
-    setMsg("");
+    setErrorMsg("");
+    setSuccessMsg("");
+    
+    // Validações
+    if (!form.cpf || !form.name || !form.email || !form.password || !form.role || !form.polo) {
+      setErrorMsg("Todos os campos são obrigatórios");
+      return;
+    }
+
+    setLoading(true);
     try {
       await axios.post(API_URL, form);
-      setMsg("Usuário cadastrado!");
-    } catch (e) {
-      setMsg("Erro ao cadastrar usuário.");
+      setSuccessMsg("Usuário cadastrado com sucesso!");
+      // Limpar formulário
+      setForm({
+        cpf: "",
+        name: "",
+        email: "",
+        password: "",
+        role: "",
+        polo: ""
+      });
+    } catch (e: any) {
+      setErrorMsg(e.response?.data?.message || "Erro ao cadastrar usuário");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -49,37 +94,38 @@ export default function CadastrarUsuario() {
       const res = await axios.get(API_URL);
       setUsuarios(res.data);
     } catch (e) {
-      setMsg("Erro ao buscar usuários.");
+      Alert.alert("Erro", "Não foi possível carregar os usuários");
     } finally {
       setLoadingUsuarios(false);
     }
   };
 
   const handleOpenModal = () => {
-    fetchUsuarios();
     setModalVisible(true);
+    fetchUsuarios();
   };
 
-  const handleCloseModal = () => setModalVisible(false);
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
 
-  // Excluir usuário (exceto aluno)
   const handleExcluirUsuario = async (cpf: string) => {
     Alert.alert(
-      "Confirmar exclusão",
+      "Confirmar Exclusão",
       "Tem certeza que deseja excluir este usuário?",
       [
         { text: "Cancelar", style: "cancel" },
-        {
-          text: "Excluir",
+        { 
+          text: "Excluir", 
           style: "destructive",
           onPress: async () => {
             setActionLoading(true);
             try {
               await axios.delete(`${API_URL}/${cpf}`);
-              setUsuarios(usuarios => usuarios.filter(u => u.cpf !== cpf));
-              setSuccessMsg("Usuário excluído!");
+              fetchUsuarios();
+              Alert.alert("Sucesso", "Usuário excluído com sucesso");
             } catch (e) {
-              setErrorMsg("Erro ao excluir usuário.");
+              Alert.alert("Erro", "Não foi possível excluir o usuário");
             } finally {
               setActionLoading(false);
             }
@@ -89,28 +135,23 @@ export default function CadastrarUsuario() {
     );
   };
 
-  // Desativar aluno (desvincular de todas as turmas)
-  const handleDesativarAluno = async (user_id: number) => {
+  const handleDesativarAluno = async (userId: number) => {
     Alert.alert(
-      "Confirmar desativação",
+      "Confirmar Desativação",
       "Tem certeza que deseja desativar este aluno?",
       [
         { text: "Cancelar", style: "cancel" },
-        {
-          text: "Desativar",
+        { 
+          text: "Desativar", 
           style: "destructive",
           onPress: async () => {
             setActionLoading(true);
             try {
-              const res = await axios.get(`${API_ENDPOINTS.ALUNOS_TURMAS}?aluno_id=${user_id}`);
-              const associacoes = res.data;
-              for (const assoc of associacoes) {
-                await axios.patch(`${API_ENDPOINTS.ALUNOS_TURMAS}/${assoc.id}/desativar`);
-              }
-              setUsuarios(usuarios => usuarios.map(u => u.user_id === user_id ? { ...u, role: 'aluno', polo: u.polo } : u));
-              setSuccessMsg("Aluno desativado!");
+              await axios.patch(`${API_URL}/${userId}/deactivate`);
+              fetchUsuarios();
+              Alert.alert("Sucesso", "Aluno desativado com sucesso");
             } catch (e) {
-              setErrorMsg("Erro ao desativar aluno.");
+              Alert.alert("Erro", "Não foi possível desativar o aluno");
             } finally {
               setActionLoading(false);
             }
@@ -120,64 +161,236 @@ export default function CadastrarUsuario() {
     );
   };
 
-  useEffect(() => {
-    if (successMsg || errorMsg) {
-      const timer = setTimeout(() => {
-        setSuccessMsg("");
-        setErrorMsg("");
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [successMsg, errorMsg]);
-
   return (
-    <ScrollView contentContainerStyle={authStyles.container}>
-      <TextInput style={authStyles.input} placeholder="CPF" onChangeText={v => handleChange("cpf", v)} value={form.cpf} />
-      <TextInput style={authStyles.input} placeholder="Nome" onChangeText={v => handleChange("name", v)} value={form.name} />
-      <TextInput style={authStyles.input} placeholder="Email" onChangeText={v => handleChange("email", v)} value={form.email} />
-      <TextInput style={authStyles.input} placeholder="Senha" secureTextEntry onChangeText={v => handleChange("password", v)} value={form.password} />
-      <TextInput style={authStyles.input} placeholder="Função (admin, docente, monitor, aluno)" onChangeText={v => handleChange("role", v)} value={form.role} />
-      <TextInput style={authStyles.input} placeholder="Polo" onChangeText={v => handleChange("polo", v)} value={form.polo} />
-      <Button title="Cadastrar" onPress={handleSubmit} color={authStyles.button.backgroundColor} />
-      <Button title="Gerenciar Usuários" onPress={handleOpenModal} color={authStyles.button.backgroundColor} />
-      <Text style={authStyles.errorText}>{errorMsg}</Text>
-      <Text style={{ color: 'green', textAlign: 'center' }}>{successMsg}</Text>
-      <Modal
-        visible={modalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={handleCloseModal}
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f8fafc' }}>
+      <KeyboardAvoidingView 
+        style={{ flex: 1 }} 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={authStyles.modalOverlay}>
-          <View style={authStyles.modalContent}>
-            <Text style={[authStyles.title, { marginBottom: 10 }]}>Usuários</Text>
-            {loadingUsuarios || actionLoading ? (
-              <ActivityIndicator size="large" color="#007bff" />
-            ) : (
-              <FlatList
-                data={usuarios}
-                keyExtractor={item => item.cpf}
-                renderItem={({ item }) => (
-                  <View style={authStyles.userItem}>
-                    <Text>{item.name} ({item.role}) - {item.polo}</Text>
-                    {item.role === 'aluno' ? (
-                      <TouchableOpacity style={authStyles.actionBtn} onPress={() => handleDesativarAluno(item.user_id)}>
-                        <Text style={{color: 'red'}}>Desativar</Text>
-                      </TouchableOpacity>
-                    ) : (
-                      <TouchableOpacity style={authStyles.actionBtn} onPress={() => handleExcluirUsuario(item.cpf)}>
-                        <Text style={{color: 'red'}}>Excluir</Text>
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                )}
-                style={{ maxHeight: 300, width: '100%' }}
+        <ScrollView 
+          style={{ flex: 1 }}
+          contentContainerStyle={{ padding: 20 }}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Header */}
+          <View style={authStyles.loginCard}>
+            <View style={{ alignItems: 'center', marginBottom: 24 }}>
+              <View style={[authStyles.logoIcon, { backgroundColor: '#667eea' }]}>
+                <Ionicons name="person-add" size={32} color="#fff" />
+              </View>
+              <Text style={authStyles.title}>Cadastrar Usuário</Text>
+              <Text style={authStyles.subtitle}>
+                Adicione um novo usuário ao sistema
+              </Text>
+            </View>
+
+            {/* Formulário */}
+            <View style={authStyles.inputGroup}>
+              <Text style={authStyles.inputLabel}>CPF</Text>
+              <TextInput
+                style={[
+                  authStyles.input,
+                  focusedField === 'cpf' && authStyles.inputFocused
+                ]}
+                placeholder="000.000.000-00"
+                placeholderTextColor="#9ca3af"
+                value={form.cpf}
+                onChangeText={v => handleChange("cpf", v)}
+                onFocus={() => setFocusedField('cpf')}
+                onBlur={() => setFocusedField(null)}
+                keyboardType="numeric"
               />
-            )}
-            <Button title="Fechar" onPress={handleCloseModal} color={authStyles.button.backgroundColor} />
+            </View>
+
+            <View style={authStyles.inputGroup}>
+              <Text style={authStyles.inputLabel}>Nome Completo</Text>
+              <TextInput
+                style={[
+                  authStyles.input,
+                  focusedField === 'name' && authStyles.inputFocused
+                ]}
+                placeholder="Digite o nome completo"
+                placeholderTextColor="#9ca3af"
+                value={form.name}
+                onChangeText={v => handleChange("name", v)}
+                onFocus={() => setFocusedField('name')}
+                onBlur={() => setFocusedField(null)}
+              />
+            </View>
+
+            <View style={authStyles.inputGroup}>
+              <Text style={authStyles.inputLabel}>Email</Text>
+              <TextInput
+                style={[
+                  authStyles.input,
+                  focusedField === 'email' && authStyles.inputFocused
+                ]}
+                placeholder="email@exemplo.com"
+                placeholderTextColor="#9ca3af"
+                value={form.email}
+                onChangeText={v => handleChange("email", v)}
+                onFocus={() => setFocusedField('email')}
+                onBlur={() => setFocusedField(null)}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </View>
+
+            <View style={authStyles.inputGroup}>
+              <Text style={authStyles.inputLabel}>Senha</Text>
+              <TextInput
+                style={[
+                  authStyles.input,
+                  focusedField === 'password' && authStyles.inputFocused
+                ]}
+                placeholder="Digite uma senha segura"
+                placeholderTextColor="#9ca3af"
+                value={form.password}
+                onChangeText={v => handleChange("password", v)}
+                onFocus={() => setFocusedField('password')}
+                onBlur={() => setFocusedField(null)}
+                secureTextEntry
+              />
+            </View>
+
+            <View style={authStyles.inputGroup}>
+              <Text style={authStyles.inputLabel}>Função</Text>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                {roles.map((role) => (
+                  <TouchableOpacity
+                    key={role.value}
+                    style={[
+                      authStyles.roleChip,
+                      form.role === role.value && authStyles.roleChipSelected
+                    ]}
+                    onPress={() => handleChange("role", role.value)}
+                  >
+                    <Text style={[
+                      authStyles.roleChipText,
+                      form.role === role.value && authStyles.roleChipTextSelected
+                    ]}>
+                      {role.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            <View style={authStyles.inputGroup}>
+              <Text style={authStyles.inputLabel}>Polo</Text>
+              <TextInput
+                style={[
+                  authStyles.input,
+                  focusedField === 'polo' && authStyles.inputFocused
+                ]}
+                placeholder="Digite o polo"
+                placeholderTextColor="#9ca3af"
+                value={form.polo}
+                onChangeText={v => handleChange("polo", v)}
+                onFocus={() => setFocusedField('polo')}
+                onBlur={() => setFocusedField(null)}
+              />
+            </View>
+
+            {/* Mensagens */}
+            {errorMsg ? (
+              <View style={authStyles.errorContainer}>
+                <Text style={authStyles.errorText}>{errorMsg}</Text>
+              </View>
+            ) : null}
+
+            {successMsg ? (
+              <View style={[authStyles.errorContainer, { backgroundColor: '#f0f9ff', borderLeftColor: '#10b981' }]}>
+                <Text style={[authStyles.errorText, { color: '#059669' }]}>{successMsg}</Text>
+              </View>
+            ) : null}
+
+            {/* Botões */}
+            <TouchableOpacity
+              style={[authStyles.button, authStyles.primaryButton]}
+              onPress={handleSubmit}
+              disabled={loading}
+              activeOpacity={0.8}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={authStyles.buttonText}>Cadastrar Usuário</Text>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[authStyles.button, authStyles.secondaryButton]}
+              onPress={handleOpenModal}
+              activeOpacity={0.8}
+            >
+              <Text style={authStyles.secondaryButtonText}>Gerenciar Usuários</Text>
+            </TouchableOpacity>
           </View>
-        </View>
-      </Modal>
-    </ScrollView>
+
+          {/* Modal de usuários */}
+          <Modal
+            visible={modalVisible}
+            transparent
+            animationType="slide"
+            onRequestClose={handleCloseModal}
+          >
+            <View style={authStyles.modalOverlay}>
+              <View style={[authStyles.modalContent, { maxHeight: '80%' }]}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                  <Text style={authStyles.modalTitle}>Usuários Cadastrados</Text>
+                  <TouchableOpacity
+                    onPress={handleCloseModal}
+                    style={{ padding: 8 }}
+                  >
+                    <Ionicons name="close" size={24} color="#6b7280" />
+                  </TouchableOpacity>
+                </View>
+
+                {loadingUsuarios || actionLoading ? (
+                  <View style={authStyles.loadingContainer}>
+                    <ActivityIndicator size="large" color="#667eea" />
+                    <Text style={authStyles.loadingText}>Carregando usuários...</Text>
+                  </View>
+                ) : (
+                  <FlatList
+                    data={usuarios}
+                    keyExtractor={item => item.cpf}
+                    renderItem={({ item }) => (
+                      <View style={authStyles.userItem}>
+                        <View style={{ flex: 1 }}>
+                          <Text style={authStyles.userItemText}>{item.name}</Text>
+                          <Text style={[authStyles.menuSubtitle, { marginTop: 4 }]}>
+                            {item.role} • {item.polo}
+                          </Text>
+                        </View>
+                        
+                        <TouchableOpacity 
+                          style={[authStyles.actionBtn, { backgroundColor: '#ef4444' }]}
+                          onPress={() => {
+                            if (item.role === 'aluno') {
+                              handleDesativarAluno(item.user_id);
+                            } else {
+                              handleExcluirUsuario(item.cpf);
+                            }
+                          }}
+                        >
+                          <Text style={authStyles.actionBtnText}>
+                            {item.role === 'aluno' ? 'Desativar' : 'Excluir'}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                    style={{ width: '100%' }}
+                    showsVerticalScrollIndicator={false}
+                  />
+                )}
+              </View>
+            </View>
+          </Modal>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }

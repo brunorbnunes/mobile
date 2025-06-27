@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { View, TextInput, Button, Text, StyleSheet } from "react-native";
+import { View, TextInput, Button, Text } from "react-native";
 import axios from "axios";
+import { authStyles } from "../assets/styles/auth.styles";
 
-const API_URL = "http://192.168.179.173:5001/api/turmas";
+const API_URL = "http://192.168.15.12:5001/api/turmas";
 
 export default function CadastrarTurma() {
   const [form, setForm] = useState({
@@ -31,18 +32,13 @@ export default function CadastrarTurma() {
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput style={styles.input} placeholder="Nome da turma" value={form.nome} onChangeText={v => handleChange("nome", v)} />
-      <TextInput style={styles.input} placeholder="ID da unidade" value={form.unidade_id} onChangeText={v => handleChange("unidade_id", v)} keyboardType="numeric" />
-      <TextInput style={styles.input} placeholder="ID do docente" value={form.docente_id} onChangeText={v => handleChange("docente_id", v)} keyboardType="numeric" />
-      <TextInput style={styles.input} placeholder="ID do monitor (opcional)" value={form.monitor_id} onChangeText={v => handleChange("monitor_id", v)} keyboardType="numeric" />
+    <View style={authStyles.container}>
+      <TextInput style={authStyles.input} placeholder="Nome da turma" value={form.nome} onChangeText={v => handleChange("nome", v)} />
+      <TextInput style={authStyles.input} placeholder="ID da unidade" value={form.unidade_id} onChangeText={v => handleChange("unidade_id", v)} keyboardType="numeric" />
+      <TextInput style={authStyles.input} placeholder="ID do docente" value={form.docente_id} onChangeText={v => handleChange("docente_id", v)} keyboardType="numeric" />
+      <TextInput style={authStyles.input} placeholder="ID do monitor (opcional)" value={form.monitor_id} onChangeText={v => handleChange("monitor_id", v)} keyboardType="numeric" />
       <Button title="Cadastrar" onPress={handleSubmit} />
       <Text>{msg}</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { padding: 20 },
-  input: { borderWidth: 1, marginBottom: 10, padding: 8, borderRadius: 4 }
-});

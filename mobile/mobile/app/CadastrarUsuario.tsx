@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { View, TextInput, Button, Text, StyleSheet, ScrollView } from "react-native";
+import { TextInput, Button, Text, ScrollView } from "react-native";
 import axios from "axios";
+import { authStyles } from "../assets/styles/auth.styles";
 
-const API_URL = "http://192.168.179.173:5001/api/users"; // Troque pelo IP do seu PC
+const API_URL = "http://192.168.15.12:5001/api/users"; // Troque pelo IP do seu PC
 
 export default function CadastrarUsuario() {
   const [form, setForm] = useState({
@@ -28,20 +29,15 @@ export default function CadastrarUsuario() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <TextInput style={styles.input} placeholder="CPF" onChangeText={v => handleChange("cpf", v)} value={form.cpf} />
-      <TextInput style={styles.input} placeholder="Nome" onChangeText={v => handleChange("name", v)} value={form.name} />
-      <TextInput style={styles.input} placeholder="Email" onChangeText={v => handleChange("email", v)} value={form.email} />
-      <TextInput style={styles.input} placeholder="Senha" secureTextEntry onChangeText={v => handleChange("password", v)} value={form.password} />
-      <TextInput style={styles.input} placeholder="Função (admin, docente, monitor, aluno)" onChangeText={v => handleChange("role", v)} value={form.role} />
-      <TextInput style={styles.input} placeholder="Polo" onChangeText={v => handleChange("polo", v)} value={form.polo} />
+    <ScrollView contentContainerStyle={authStyles.container}>
+      <TextInput style={authStyles.input} placeholder="CPF" onChangeText={v => handleChange("cpf", v)} value={form.cpf} />
+      <TextInput style={authStyles.input} placeholder="Nome" onChangeText={v => handleChange("name", v)} value={form.name} />
+      <TextInput style={authStyles.input} placeholder="Email" onChangeText={v => handleChange("email", v)} value={form.email} />
+      <TextInput style={authStyles.input} placeholder="Senha" secureTextEntry onChangeText={v => handleChange("password", v)} value={form.password} />
+      <TextInput style={authStyles.input} placeholder="Função (admin, docente, monitor, aluno)" onChangeText={v => handleChange("role", v)} value={form.role} />
+      <TextInput style={authStyles.input} placeholder="Polo" onChangeText={v => handleChange("polo", v)} value={form.polo} />
       <Button title="Cadastrar" onPress={handleSubmit} />
       <Text>{msg}</Text>
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { padding: 20 },
-  input: { borderWidth: 1, marginBottom: 10, padding: 8, borderRadius: 4 }
-});

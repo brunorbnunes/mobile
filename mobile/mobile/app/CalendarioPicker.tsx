@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, Button, ActivityIndicator } from "react-native";
 import axios from "axios";
+import { authStyles } from "../assets/styles/auth.styles";
 
 // Altere para o IP correto da sua máquina
-const API_URL = "http://192.168.179.173:5001/api";
+const API_URL = "http://192.168.15.12:5001/api";
 
 interface Calendario {
   calendario_id: number;
@@ -39,7 +40,7 @@ export default function CalendarioPicker({ turmaId, onSelect, value }: Calendari
   if (!datas.length) return <Text>Nenhuma data cadastrada para esta turma.</Text>;
 
   return (
-    <View style={styles.pickerContainer}>
+    <View style={authStyles.pickerContainer}>
       {datas.map((c) => (
         <Button
           key={c.calendario_id}
@@ -51,7 +52,3 @@ export default function CalendarioPicker({ turmaId, onSelect, value }: Calendari
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  pickerContainer: { marginBottom: 10 },
-});

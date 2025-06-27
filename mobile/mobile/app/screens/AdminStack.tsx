@@ -1,20 +1,21 @@
 import React, { useEffect } from 'react';
-import { View, Text, Button, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, Button, ScrollView } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import CadastrarUsuario from '../CadastrarUsuario';
 import CadastrarUnidade from '../CadastrarUnidade';
 import { useAuth } from '../../AuthContext';
+import { authStyles } from '../../assets/styles/auth.styles';
 
 // --- TELA INICIAL DO ADMIN ---
 const AdminHome = () => {
   const navigation = useNavigation<any>();
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Bem-vindo, Admin</Text>
+    <ScrollView contentContainerStyle={authStyles.container}>
+      <Text style={authStyles.title}>Bem-vindo, Admin</Text>
       <Button title="Cadastrar Usuário" onPress={() => navigation.navigate('CadastrarUsuario')} />
-      <View style={styles.spacer} />
+      <View style={authStyles.spacer} />
       <Button title="Cadastrar Unidade" onPress={() => navigation.navigate('CadastrarUnidade')} />
     </ScrollView>
   );
@@ -40,12 +41,3 @@ export default function AdminStack() {
     </Stack.Navigator>
   );
 }
-
-// --- ESTILOS ---
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  scrollContent: { paddingBottom: 20 },
-  input: { borderWidth: 1, marginBottom: 10, padding: 8, borderRadius: 4 },
-  title: { fontWeight: 'bold', fontSize: 18, marginBottom: 10 },
-  spacer: { height: 15 }
-});

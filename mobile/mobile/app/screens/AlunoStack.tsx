@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, Button } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAuth } from '../../AuthContext';
+import { authStyles } from '../../assets/styles/auth.styles';
 
 // --- TELA INICIAL DO ALUNO ---
 const AlunoHome = () => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Bem-vindo, Aluno</Text>
-      <Text style={styles.subtitle}>Em breve, você poderá visualizar suas matérias aqui.</Text>
+    <View style={authStyles.container}>
+      <Text style={authStyles.title}>Bem-vindo, Aluno</Text>
+      <Text style={authStyles.subtitle}>Em breve, você poderá visualizar suas matérias aqui.</Text>
     </View>
   );
 };
@@ -31,10 +32,3 @@ export default function AlunoStack() {
     </Stack.Navigator>
   );
 }
-
-// --- ESTILOS ---
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 10 },
-  subtitle: { fontSize: 16, textAlign: 'center', color: '#555' }
-});
